@@ -1,0 +1,63 @@
+{
+  "name": "food-app-security-be",
+  "version": "1.0.0",
+  "description": "food app customer backend apis",
+  "main": "handler.js",
+  "scripts": {
+    "tsc": "tsc",
+    "clean": "rimraf ./dist",
+    "package": "rimraf *.zip && zip -rq temp-app.zip dist node_modules package*.json serverless.yml deploy-configs webpack.config.js source-map-install.js && mv temp-app.zip",
+    "build": "rimraf ./dist && tsc",
+    "deploy": "npm run build && serverless deploy -s dev",
+    "test": "jest --coverage --no-cache --i --config ./jest.config.ts",
+    "jest-coverage": "jest --coverage",
+    "lint": "tslint \"src/**/*.ts\" --force",
+    "local": "npm run build && serverless invoke local -s dev -p events/test-event.json -f hello-service ",
+    "local-auth-admin": "npm run build && serverless invoke local -s dev -p events/auth-event.json -f cognito-admin-authorizer "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/armkay/food-app-security-be.git"
+  },
+  "author": "ArmKay",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/armkay/food-app-security-be/issues"
+  },
+  "homepage": "https://github.com/armkay/food-app-security-be#readme",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "@types/jest": "^29.5.13",
+    "@types/node": "^22.7.6",
+    "jest": "^29.7.0",
+    "rimraf": "^6.0.1",
+    "serverless": "^3.39.0",
+    "serverless-domain-manager": "^7.4.0",
+    "serverless-esbuild": "^1.55.0",
+    "serverless-plugin-ifelse": "^1.0.7",
+    "serverless-webpack": "^5.14.2",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "webpack": "^5.95.0"
+  },
+  "dependencies": {
+    "@aws-amplify/ui-angular": "^5.0.29",
+    "@aws-sdk/client-acm": "^3.670.0",
+    "@aws-sdk/client-dynamodb": "^3.687.0",
+    "@aws-sdk/client-lambda": "^3.670.0",
+    "@aws-sdk/client-rds-data": "^3.670.0",
+    "@aws-sdk/client-s3": "^3.670.0",
+    "@aws-sdk/client-secrets-manager": "^3.670.0",
+    "@aws-sdk/client-ssm": "^3.670.0",
+    "@aws-sdk/s3-request-presigner": "^3.670.0",
+    "@babel/traverse": "^7.25.7",
+    "aws-amplify": "^6.6.5",
+    "jsonwebtoken": "^9.0.2",
+    "jwk-to-pem": "^2.0.7",
+    "jwks-rsa": "^3.2.0",
+    "node-fetch": "^3.3.2",
+    "pg": "^8.13.0",
+    "uuid": "^11.0.2"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2017",
+    "sourceRoot": "src",
+    "outDir": "dist",
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "declaration": false,
+    "listFiles": false,
+    "lib": [
+      "ES5",
+      "ES6",
+      "ES2015",
+      "ES2015.Promise",
+      "DOM",
+      "ESNext.AsyncIterable"
+    ]
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    ".vscode",
+    ".serverless",
+    ".git",
+    "node_modules/**/*",
+    "dist",
+    "test/**/*.ts"
+  ],
+  "compileOnSave": true,
+  "buildOnSave": false,
+  "atom": {
+    "rewriteTsconfig": false
+  }
+}

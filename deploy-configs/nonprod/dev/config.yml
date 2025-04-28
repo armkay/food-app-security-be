@@ -1,0 +1,28 @@
+########### Required #############
+appID: 
+appName: food-app
+appOwner: food-app 
+createdByEmail: armkay
+accountId: 202533542038
+region: ca-central-1
+environment: dev 
+auth_environment: dev 
+deploymentBucketName: food-app-be-artifact
+serviceName: be-security
+runtime: nodejs18.x
+
+architecture: arm64
+memorySize: 1024
+timeout: 30
+logRetentionInDays: 3
+
+reservedConcurrency: 100
+provisionedConcurrency: 0
+
+
+restApiId: puwttty3ne
+restApiRootResourceId: wc4kas1
+
+authorizerId: rp4l4a
+
+SecretArn: arn:aws:secretsmanager:ca-central-1:202533542038:secret:dev/food-app-db-secret-0mQr2A

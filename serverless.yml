@@ -1,0 +1,108 @@
+custom:
+  devAccountType: nonprod
+  config: ${file(./deploy-configs/${self:custom.${opt:stage}AccountType}/${opt:stage}/config.yml)}
+  pEnv: ${file(./deploy-configs/${self:custom.${opt:stage}AccountType}/${opt:stage}/env.yml)}
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    exclude: []
+    target: node18
+    platform: node
+    concurrency: 10
+
+service: ${self:custom.config.serviceName}
+  
+provider:
+  lambdaHashingVersion: 20201221
+  name: aws
+  runtime: ${self:custom.config.runtime}
+  stage: ${self:custom.config.environment, "dev"}
+  region: ${self:custom.config.region}
+  stackName: ${self:custom.config.appOwner}-${self:custom.config.environment}-${self:custom.config.serviceName}-npm-serverless
+  memorySize: ${self:custom.config.memorySize}
+  timeout: ${self:custom.config.timeout}
+  logRetentionInDays: ${self:custom.config.logRetentionInDays}
+  deploymentPrefix: serverless
+  architecture: ${self:custom.config.architecture}
+  #stack-tags to be created
+  stackTags:
+    AppName: ${self:custom.config.appName}
+    AppOwner: ${self:custom.config.appOwner}
+    CreatedByEmail: ${self:custom.config.createdByEmail}
+    Environment: ${self:custom.config.environment}
+  #function-tags to be created
+  tags:
+    AppName: ${self:custom.config.appName}
+    AppOwner: ${self:custom.config.appOwner}
+    CreatedByEmail: ${self:custom.config.createdByEmail}
+    Environment: ${self:custom.config.environment}
+  #S3 bucket  
+  deploymentBucket:
+    name: ${self:custom.config.deploymentBucketName}
+    serverSideEncryption: AES256
+  #service wide environment variables
+  environment: ${file(./deploy-configs/${self:custom.${opt:stage}AccountType}/${opt:stage}/env.yml)}
+
+  iam:
+   role:
+     statements:
+       - Effect: "Allow"
+         Action:
+              - ssm:GetParameters
+              - s3:CreateBucket
+              - s3:ListBucket
+              - s3:PutObject
+              - s3:GetObject
+         Resource: "*"
+         
+  httpApi:
+    id: ${self:custom.config.restApiId}  
+
+
+frameworkVersion: "3"
+plugins:
+  - serverless-plugin-ifelse
+  - serverless-esbuild
+
+resources:
+  Resources:
+    AdminCognitoAuthorizerLambda:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:custom.config.serviceName}-lambda-authorizer-exec-role
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: ${self:custom.config.serviceName}-lambda-authorizer-exec-role-po-dbr-ssm-acm
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:                
+                - Effect: Allow
+                  Action:
+                    - logs:PutLogEvents
+                    - logs:CreateLogStream
+                    - logs:CreateLogGroup
+                  Resource: "arn:aws:logs:*:*:*"
+                - Effect: Allow
+                  Action:
+                    - lambda:InvokeFunction
+                  Resource: arn:aws:lambda:ca-central-1:202533542038:function:*
+                - Effect: Allow
+                  Action:
+                    - cognito-idp:GetUser
+                  Resource: arn:aws:cognito-idp:ca-central-1:202533542038:userpool/ca-central-1_aGhy3fXZc
+
+                     
+functions:
+  cognito-admin-authorizer:
+    handler: dist/security-service.handler
+    memorySize: 128
+    timeout: 10
+      
